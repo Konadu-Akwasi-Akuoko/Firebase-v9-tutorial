@@ -2,8 +2,8 @@ const {
   addToDocument,
   deleteFromDocument,
   deleteWithField,
-  getDocuments,
   getRealTimeUpdates,
+  updateDocument,
 } = require("./db/firestore");
 
 // getDocuments();
@@ -32,4 +32,11 @@ deleteBookFieldForm.addEventListener("submit", async (e) => {
   console.log("Delete field clicked");
   await deleteWithField(deleteBookFieldForm.author.value);
   deleteBookFieldForm.reset();
+});
+
+const updateBookForm = document.querySelector(".update");
+updateBookForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await updateDocument(updateBookForm.id.value);
+  updateBookForm.reset();
 });

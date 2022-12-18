@@ -10,22 +10,17 @@ import {
   where,
   getDocs,
   onSnapshot,
+  orderBy,
+  serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
+import firebaseApp from "../firebaseConfig";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDUpEGfDS0-0KVT3H0odZx6SOHQ16Nt9vU",
-  authDomain: "fir-tutorials-4813c.firebaseapp.com",
-  projectId: "fir-tutorials-4813c",
-  storageBucket: "fir-tutorials-4813c.appspot.com",
-  messagingSenderId: "1076071880723",
-  appId: "1:1076071880723:web:cfc8efa3baf0ce12bd87e6",
-  measurementId: "G-L317BZHHNY",
-};
+const app = firebaseApp();
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const docRef = collection(db, "books");
-const deleteDocRef = (id) => doc(db, "books", id);
+const docRefDoc = (id) => doc(db, "books", id);
 
 // Getting documents from the firestore (Not real time)
 export const getDocuments = async () => {
@@ -40,12 +35,13 @@ export const getDocuments = async () => {
 
 // Listening to get real time updates => onSnapshot
 export const getRealTimeUpdates = () => {
+  const q = query(docRef, orderBy("createdAt"));
   const unsubscribe = onSnapshot(
-    docRef,
+    q,
     (snapshot) => {
       let realTimeDocs = [];
       snapshot.docs.forEach((doc) => {
-        realTimeDocs.push({ data: doc.data(), id: doc.id });
+        realTimeDocs.push({ ...doc.data(), id: doc.id });
       });
       console.log(realTimeDocs);
     },
@@ -59,6 +55,7 @@ export const addToDocument = async (title, author) => {
     const docToAdd = await addDoc(docRef, {
       author: author,
       title: title,
+      createdAt: serverTimestamp(),
     });
     console.log("Added to the collection with the ID of: ", docToAdd.id);
   } catch (e) {
@@ -69,7 +66,7 @@ export const addToDocument = async (title, author) => {
 // Delete from document
 export const deleteFromDocument = async (id) => {
   try {
-    await deleteDoc(deleteDocRef(id));
+    await deleteDoc(docRefDoc(id));
   } catch (e) {
     console.error("Error deleting data: ", e);
   }
@@ -86,9 +83,14 @@ export const deleteWithField = async (author) => {
     // Cycle through the snapshot and delete any matching data
     querySnapshot.forEach(async (doc) => {
       console.log("Deleting these data: ", doc.data());
-      await deleteDoc(deleteDocRef(doc.id));
+      await deleteDoc(docRefDoc(doc.id));
     });
   } catch (e) {
     console.log("Couldn't delete data: ", e);
   }
+};
+
+// Updating a document
+export const updateDocument = async (id) => {
+  await updateDoc(docRefDoc(id), { title: "updated title" });
 };
