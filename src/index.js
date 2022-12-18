@@ -1,5 +1,5 @@
 const { async } = require("@firebase/util");
-const { signUpNewUser } = require("./auth/firebaseAuth");
+const { signUpNewUser, signInUser, logOut } = require("./auth/firebaseAuth");
 const {
   addToDocument,
   deleteFromDocument,
@@ -51,4 +51,19 @@ signupUserForm.addEventListener("submit", async (e) => {
   const password = signupUserForm.password.value;
   await signUpNewUser(email, password);
   signupUserForm.reset();
+});
+
+const signInUserForm = document.querySelector(".signin");
+signInUserForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = signInUserForm.email.value;
+  const password = signInUserForm.password.value;
+  await signInUser(email, password);
+  signInUserForm.reset();
+});
+
+const logOutUser = document.querySelector(".logout");
+logOutUser.addEventListener("click", async (e) => {
+  e.preventDefault();
+  await logOut();
 });
