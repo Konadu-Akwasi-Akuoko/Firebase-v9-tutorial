@@ -14,9 +14,7 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import firebaseApp from "../firebaseConfig";
-
-const app = firebaseApp();
+import app from "../firebaseConfig";
 
 const db = getFirestore(app);
 const docRef = collection(db, "books");

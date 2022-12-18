@@ -1,3 +1,5 @@
+const { async } = require("@firebase/util");
+const { signUpNewUser } = require("./auth/firebaseAuth");
 const {
   addToDocument,
   deleteFromDocument,
@@ -39,4 +41,14 @@ updateBookForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   await updateDocument(updateBookForm.id.value);
   updateBookForm.reset();
+});
+
+// Firebase auth
+const signupUserForm = document.querySelector(".signup");
+signupUserForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = signupUserForm.email.value;
+  const password = signupUserForm.password.value;
+  await signUpNewUser(email, password);
+  signupUserForm.reset();
 });
